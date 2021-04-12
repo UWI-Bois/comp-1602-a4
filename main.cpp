@@ -4,19 +4,26 @@
 #include <ctime>
 #include <cstdlib>
 #include <windows.h>
+#include <cstdlib>
 using namespace std;
 
 // constants
 const string DATA_DIR = "datafiles/";
 const string BASE_DATA_FILE_NAME = "Data";
 const string DATA_FILE_EXT = ".txt";
-#define MAX_CASES 27
-#define MAX_ROUNDS 11
+#define MIN_CASES 16
+#define MAX_CASES 26
+#define MAX_CASES_SIZE 27
+#define MAX_ROUNDS_SIZE 11
 // global vars
-int CASES[MAX_CASES]; // index = case, value = money in case
-int ROUNDS[MAX_ROUNDS]; // index = round #, val = how many cases to choose in that round
+int CASES_MONEY[MAX_CASES_SIZE]; // possible values inside a case, idx start at 1
+int PLAYER_CASES[MAX_CASES_SIZE]; // index = case, value = money in case
+int ROUNDS[MAX_ROUNDS_SIZE]; // index = round #, val = how many cases to choose in that round
 int numCases = 0;
 int numRounds = 0;
+int selectedCase = 0;
+int startingCase = 0;
+int currRound = 1;
 
 // function protos
 string getDataString(int dataNum);
@@ -26,22 +33,55 @@ void printArray(int arr[], int size);
 int generateRandom(int lower, int upper);
 int printChooseNumCases();
 bool isValidCases(int numCases);
-void printMoneyInCases();
-void printCases();
+bool isValidCase(int caseIdx);
+bool isValidPlayerCase(int caseIdx);
+void printMoney();
+int printCases();
+void chooseCase(int caseIdx);
 
 // main
 int main() {
     cout << "Welcome to Deal or No Deal!" << endl;
-//    numCases = printChooseNumCases();
-    numCases = 26;
-    loadArray(numCases);
+    numCases = 16;
+    // numCases = printChooseNumCases();
+    if (!loadArray(numCases)){
+        cout << "error in loading arrays! exiting wrongfully." << endl;
+        return -1;
+    }
+
+    printMoney();
     cout << "You must now pick a starting case." << endl;
-    printCases();
-    printMoneyInCases();
+    startingCase = printCases();
+    chooseCase(startingCase);
+
+    while (currRound <= numRounds){
+        // system("CLS");
+        int casesSelected = 0;
+        cout << "We are in Round " << currRound << endl;
+        cout << "You must choose " << ROUNDS[currRound] << " cases in this round." << endl;
+        while(casesSelected <  ROUNDS[currRound]){
+            selectedCase = printCases();
+            chooseCase(selectedCase);
+            printMoney();
+            casesSelected++;
+        }
+        currRound++;
+    }
+
     return 0;
 }
 
 // function decs
+void chooseCase(int caseIdx) {
+    int randIdx = generateRandom(1, numCases);
+    while(CASES_MONEY[randIdx] < 0){
+        randIdx = generateRandom(1, numCases);
+    }
+    PLAYER_CASES[caseIdx] = CASES_MONEY[randIdx];
+    cout << "The value of case " << caseIdx << " is " << CASES_MONEY[randIdx] << endl;
+    CASES_MONEY[randIdx] = -1;
+}
+
 string getDataString(int dataNum){
     return DATA_DIR + BASE_DATA_FILE_NAME + to_string(dataNum) + DATA_FILE_EXT;
 }
@@ -54,18 +94,18 @@ bool loadArray(int dataNum){
         cout << "file could not be opened" << endl;
         return false;
     }
-    initArray(CASES, MAX_CASES);
+    initArray(CASES_MONEY, MAX_CASES_SIZE);
     int line;
     df >> line;
     int i = 1;
-    // load cases
+    // load case money values
     while(i <= numCases){
-        CASES[i++] = line;
+        CASES_MONEY[i++] = line;
         df >> line;
     }
 
     // load rounds
-    initArray(ROUNDS, MAX_ROUNDS);
+    initArray(ROUNDS, MAX_ROUNDS_SIZE);
     numRounds = line;
     df >> line;
     i = 1;
@@ -74,21 +114,15 @@ bool loadArray(int dataNum){
         ROUNDS[i++] = val;
         df >> line;
     }
+    // init player cases
+    initArray(PLAYER_CASES, MAX_CASES_SIZE);
     df.close();
+    return true;
 }
 
 void initArray(int arr[], int size){
     for (int i = 0; i < size; ++i) {
         arr[i] = -1;
-    }
-}
-
-void printArray(int arr[], int size){
-    for (int i = 0; i < size; ++i) {
-        if (i % 5 == 0){
-            cout << "\n";
-        }
-        cout << "\t" << arr[i];
     }
 }
 
@@ -103,19 +137,51 @@ bool isValidCases(int cases) {
     if (cases % 2 != 0){
         val = false;
     }
-    if (cases < 16 || cases > 26){
+    if (cases < MIN_CASES || cases > MAX_CASES){ // not in range
         val = false;
     }
 
     if (!val){
-        cout << "Invalid nubmer of cases chosen, try again (16, 18, 20, 22, 24 ,26) ";
+        cout << "Invalid number of cases chosen, try again (16, 18, 20, 22, 24 ,26): ";
     }
-
     return val;
+}
+
+bool isValidCase(int caseIdx) {
+    if (caseIdx < 1 || caseIdx > numCases){ // not in range
+        cout << "Invalid case chosen (out of range), try again: ";
+        return false;
+    }
+    if (CASES_MONEY[caseIdx] < 0){ // invalid case chosen todo debug out of range index
+        cout << "Invalid case chosen (case already chosen/does not exist), try again: ";
+        return false;
+    }
+    return true;
+}
+
+bool isValidPlayerCase(int caseIdx) {
+    if (caseIdx < 1 || caseIdx > numCases){ // not in range
+        cout << "Invalid case chosen (out of range), try again: ";
+        return false;
+    }
+    if (PLAYER_CASES[caseIdx] > 0){ // invalid case chosen todo debug out of range index
+        cout << "Invalid case chosen (case already chosen/does not exist), try again: ";
+        return false;
+    }
+    return true;
 }
 
 
 // gui functions
+void printArray(int arr[], int size){
+    for (int i = 0; i < size; ++i) {
+        if (i % 5 == 0){
+            cout << "\n";
+        }
+        cout << "\t" << arr[i];
+    }
+}
+
 int printChooseNumCases(){
     int val;
     cout << "How many cases do you want in the game (16, 18, 20, 22, 24 ,26)? ";
@@ -127,22 +193,22 @@ int printChooseNumCases(){
     return val;
 }
 
-void printMoneyInCases(){
+void printMoney(){
     int half = numCases/2;
     cout << "-------------------------" << endl;
     int i = 1;
     int k = half+1;
     while (i <= half){
         cout << "|\t" ;
-        if (CASES[i] > 0){
-            cout << CASES[i++];
+        if (CASES_MONEY[i] > 0){
+            cout << CASES_MONEY[i++];
         } else{
             cout << " ";
             i++;
         }
         cout << "\t";
-        if (CASES[k] > 0){
-            cout << CASES[k++];
+        if (CASES_MONEY[k] > 0){
+            cout << CASES_MONEY[k++];
         } else{
             cout << " ";
             k++;
@@ -152,15 +218,15 @@ void printMoneyInCases(){
     cout << "-------------------------\n" << endl;
 }
 
-void printCases(){
-    cout << "================================================" << endl;
+int printCases(){
+    cout << "=================================================" << endl;
     for (int i = 1; i <= numCases; ++i) {
         if ((i+4) % 5 == 0){ // start of new row?
             cout << "|\t";
         } else{
             cout << "\t";
         }
-        if (CASES[i] > 0){ // case valid?
+        if (PLAYER_CASES[i] < 0){ // case valid?
             cout << i;
         } else{ // case removed?
             cout << " ";
@@ -177,5 +243,12 @@ void printCases(){
             cout << "\t|" << endl;
         }
     }
-    cout << "================================================\n" << endl;
+    cout << "=================================================\n" << endl;
+    int val;
+    cout << "Please choose a case: ";
+    cin >> val;
+    while(!isValidPlayerCase(val)){
+        cin >> val;
+    }
+    return val;
 }
