@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ctime>
+#include <cstdlib>
+#include <windows.h>
 using namespace std;
 
 // constants
@@ -20,13 +23,14 @@ string getDataString(int dataNum);
 bool loadArray(int dataNum);
 void initArray(int arr[], int size);
 void printArray(int arr[], int size);
+int generateRandom(int lower, int upper);
 
 // main
 int main() {
-    loadArray(16);
-    printArray(CASES, MAX_CASES);
-    cout << endl;
-    printArray(ROUNDS, MAX_ROUNDS);
+//    loadArray(16);
+//    printArray(CASES, MAX_CASES);
+//    cout << endl;
+//    printArray(ROUNDS, MAX_ROUNDS);
     return 0;
 }
 
@@ -79,4 +83,10 @@ void printArray(int arr[], int size){
         }
         cout << "\t" << arr[i];
     }
+}
+
+int generateRandom(int lower, int upper){
+    //srand(time(0));
+    int random = lower + rand() % (upper - lower + 1);
+    return random;
 }
