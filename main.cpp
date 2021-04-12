@@ -11,7 +11,7 @@ const string DATA_DIR = "datafiles/";
 const string BASE_DATA_FILE_NAME = "Data";
 const string DATA_FILE_EXT = ".txt";
 #define MAX_CASES 27
-#define MAX_ROUNDS 10
+#define MAX_ROUNDS 11
 // global vars
 int CASES[MAX_CASES]; // index = case, value = money in case
 int ROUNDS[MAX_ROUNDS]; // index = round #, val = how many cases to choose in that round
@@ -24,17 +24,19 @@ bool loadArray(int dataNum);
 void initArray(int arr[], int size);
 void printArray(int arr[], int size);
 int generateRandom(int lower, int upper);
-int chooseNumCases();
+int printChooseNumCases();
 bool isValidCases(int numCases);
+void printMoneyInCases();
 
 // main
 int main() {
     cout << "Welcome to Deal or No Deal!" << endl;
-    numCases = chooseNumCases();
+    numCases = printChooseNumCases();
     loadArray(numCases);
-    printArray(CASES, MAX_CASES);
-    cout << endl;
-    printArray(ROUNDS, MAX_ROUNDS);
+//    printArray(CASES, MAX_CASES);
+//    cout << endl;
+//    printArray(ROUNDS, MAX_ROUNDS);
+    printMoneyInCases();
     return 0;
 }
 
@@ -96,7 +98,7 @@ int generateRandom(int lower, int upper){
 }
 
 // gui functions
-int chooseNumCases(){
+int printChooseNumCases(){
     int val;
     cout << "How many cases do you want in the game (16, 18, 20, 22, 24 ,26)? ";
     cin >> val;
@@ -104,6 +106,17 @@ int chooseNumCases(){
         cin >> val;
     }
     return val;
+}
+
+void printMoneyInCases(){
+    int half = numCases/2;
+    cout << "-------------------------" << endl;
+    int i = 1;
+    int k = half+1;
+    while (i <= half){
+        cout << "|\t" << CASES[i++] << "\t" << CASES[k++] << "\t|" << endl;
+    }
+    cout << "-------------------------" << endl;
 }
 
 bool isValidCases(int cases) {
