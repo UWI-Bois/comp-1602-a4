@@ -27,16 +27,16 @@ int generateRandom(int lower, int upper);
 int printChooseNumCases();
 bool isValidCases(int numCases);
 void printMoneyInCases();
+void printCases();
 
 // main
 int main() {
     cout << "Welcome to Deal or No Deal!" << endl;
-    numCases = printChooseNumCases();
+//    numCases = printChooseNumCases();
+    numCases = 26;
     loadArray(numCases);
-//    printArray(CASES, MAX_CASES);
-//    cout << endl;
-//    printArray(ROUNDS, MAX_ROUNDS);
-    printMoneyInCases();
+    cout << "You must now pick a starting case." << endl;
+    printCases();
     return 0;
 }
 
@@ -97,28 +97,6 @@ int generateRandom(int lower, int upper){
     return random;
 }
 
-// gui functions
-int printChooseNumCases(){
-    int val;
-    cout << "How many cases do you want in the game (16, 18, 20, 22, 24 ,26)? ";
-    cin >> val;
-    while (!isValidCases(val)){
-        cin >> val;
-    }
-    return val;
-}
-
-void printMoneyInCases(){
-    int half = numCases/2;
-    cout << "-------------------------" << endl;
-    int i = 1;
-    int k = half+1;
-    while (i <= half){
-        cout << "|\t" << CASES[i++] << "\t" << CASES[k++] << "\t|" << endl;
-    }
-    cout << "-------------------------" << endl;
-}
-
 bool isValidCases(int cases) {
     bool val = true;
     if (cases % 2 != 0){
@@ -133,4 +111,56 @@ bool isValidCases(int cases) {
     }
 
     return val;
+}
+
+
+// gui functions
+int printChooseNumCases(){
+    int val;
+    cout << "How many cases do you want in the game (16, 18, 20, 22, 24 ,26)? ";
+    cin >> val;
+    while (!isValidCases(val)){
+        cin >> val;
+    }
+    cout << "\n";
+    return val;
+}
+
+void printMoneyInCases(){
+    int half = numCases/2;
+    cout << "-------------------------" << endl;
+    int i = 1;
+    int k = half+1;
+    while (i <= half){
+        cout << "|\t" << CASES[i++] << "\t" << CASES[k++] << "\t|" << endl;
+    }
+    cout << "-------------------------\n" << endl;
+}
+
+void printCases(){
+    cout << "================================================" << endl;
+    for (int i = 1; i <= numCases; ++i) {
+        if ((i+4) % 5 == 0){ // start of new row?
+            cout << "|\t";
+        } else{
+            cout << "\t";
+        }
+        if (CASES[i] > 0){ // case valid?
+            cout << i;
+        } else{ // case removed?
+            cout << " ";
+        }
+        if (i % 5 == 0){ // end of row?
+            cout << "\t|\n";
+        }
+        // print excess spaces if starting a new row
+        if (i == numCases && i % 5 != 0){
+            while (i % 5 != 0){
+                cout << "\t" << " ";
+                i++;
+            }
+            cout << "\t|" << endl;
+        }
+    }
+    cout << "================================================\n" << endl;
 }
