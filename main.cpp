@@ -24,13 +24,17 @@ bool loadArray(int dataNum);
 void initArray(int arr[], int size);
 void printArray(int arr[], int size);
 int generateRandom(int lower, int upper);
+int chooseNumCases();
+bool isValidCases(int numCases);
 
 // main
 int main() {
-//    loadArray(16);
-//    printArray(CASES, MAX_CASES);
-//    cout << endl;
-//    printArray(ROUNDS, MAX_ROUNDS);
+    cout << "Welcome to Deal or No Deal!" << endl;
+    numCases = chooseNumCases();
+    loadArray(numCases);
+    printArray(CASES, MAX_CASES);
+    cout << endl;
+    printArray(ROUNDS, MAX_ROUNDS);
     return 0;
 }
 
@@ -89,4 +93,31 @@ int generateRandom(int lower, int upper){
     //srand(time(0));
     int random = lower + rand() % (upper - lower + 1);
     return random;
+}
+
+// gui functions
+int chooseNumCases(){
+    int val;
+    cout << "How many cases do you want in the game (16, 18, 20, 22, 24 ,26)? ";
+    cin >> val;
+    while (!isValidCases(val)){
+        cin >> val;
+    }
+    return val;
+}
+
+bool isValidCases(int cases) {
+    bool val = true;
+    if (cases % 2 != 0){
+        val = false;
+    }
+    if (cases < 16 || cases > 26){
+        val = false;
+    }
+
+    if (!val){
+        cout << "Invalid nubmer of cases chosen, try again (16, 18, 20, 22, 24 ,26) ";
+    }
+
+    return val;
 }
