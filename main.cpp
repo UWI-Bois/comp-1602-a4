@@ -37,6 +37,7 @@ int main() {
     loadArray(numCases);
     cout << "You must now pick a starting case." << endl;
     printCases();
+    printMoneyInCases();
     return 0;
 }
 
@@ -132,7 +133,21 @@ void printMoneyInCases(){
     int i = 1;
     int k = half+1;
     while (i <= half){
-        cout << "|\t" << CASES[i++] << "\t" << CASES[k++] << "\t|" << endl;
+        cout << "|\t" ;
+        if (CASES[i] > 0){
+            cout << CASES[i++];
+        } else{
+            cout << " ";
+            i++;
+        }
+        cout << "\t";
+        if (CASES[k] > 0){
+            cout << CASES[k++];
+        } else{
+            cout << " ";
+            k++;
+        }
+        cout << "\t|\n";
     }
     cout << "-------------------------\n" << endl;
 }
