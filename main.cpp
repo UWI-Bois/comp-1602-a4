@@ -41,6 +41,7 @@ float getAvgRemainingMoney();
 float getOffer();
 void chooseFirstCase(int caseIdx);
 void swapCases(int selectedCase);
+bool isValidDealChoice(int choice);
 
 // main
 int main() {
@@ -78,6 +79,10 @@ int main() {
             cout << "This is what the bank offers: " << offer << endl;
             cout << "Deal (1) or No Deal (0)? ";
             cin >> deal;
+            while (!isValidDealChoice(deal)){
+                cout << "Invalid option selected, try again: ";
+                cin >> deal;
+            }
             if (deal == 1){
                 cout << "\nCongratulations! You have won $" << offer << endl;
                 cout << "\nThanks for playing! Come back soon!" << endl;
@@ -100,6 +105,11 @@ int main() {
     return 0;
 }
 
+bool isValidDealChoice(int choice){
+    if (choice == 0 || choice == 1) return true;
+    return false;
+}
+
 void swapCases(int selectedCase) {
     // we assume at this point we are at the end
     cout << "Swapping case " << startingCaseIdx << " with " << selectedCase << endl;
@@ -111,7 +121,7 @@ void swapCases(int selectedCase) {
 
     MONEY_CASES[startingMoneyIdx] = PLAYER_CASES[startingCaseIdx];
     PLAYER_CASES[startingCaseIdx] = -1;
-    cout << "Your case is now" << selectedCase << endl;
+    cout << "Your case is now " << selectedCase << endl;
     startingCaseIdx = selectedCase;
 }
 
