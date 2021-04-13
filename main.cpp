@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include <ctime>
+
 using namespace std;
 
 // constants
@@ -48,8 +50,7 @@ int main() {
     int deal = 0;
     float offer = 0.0;
     cout << "Welcome to Deal or No Deal!" << endl;
-    numCases = 26;
-    // numCases = printChooseNumCases();
+     numCases = printChooseNumCases();
     if (!loadArray(numCases)){
         cout << "error in loading arrays! exiting wrongfully." << endl;
         return -1;
@@ -105,6 +106,7 @@ int main() {
     return 0;
 }
 
+// function decs
 bool isValidDealChoice(int choice){
     if (choice == 0 || choice == 1) return true;
     return false;
@@ -125,7 +127,6 @@ void swapCases(int selectedCase) {
     startingCaseIdx = selectedCase;
 }
 
-// function decs
 float getOffer(){
     float a = getAvgRemainingMoney();
     float b = (currRound * 1.0)/(numRounds * 1.0);
@@ -148,7 +149,7 @@ void chooseCase(int caseIdx) {
     int randMoneyIdx = generateRandom(1, numCases);
     while(MONEY_CASES[randMoneyIdx] < 0 && randMoneyIdx != startingMoneyIdx){
         randMoneyIdx = generateRandom(1, numCases);
-    }
+    } // todo fix this
     PLAYER_CASES[caseIdx] = MONEY_CASES[randMoneyIdx];
     cout << "The value of case " << caseIdx << " is " << MONEY_CASES[randMoneyIdx] << endl;
     MONEY_CASES[randMoneyIdx] = -1;
@@ -211,7 +212,7 @@ void initArray(int arr[], int size){
 }
 
 int generateRandom(int lower, int upper){
-    //srand(time(0));
+    srand(time(0));
     int random = lower + rand() % (upper - lower + 1);
     return random;
 }
