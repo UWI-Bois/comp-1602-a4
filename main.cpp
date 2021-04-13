@@ -149,7 +149,7 @@ void chooseCase(int caseIdx) {
     int randMoneyIdx = generateRandom(1, numCases);
     while(MONEY_CASES[randMoneyIdx] < 0 && randMoneyIdx != startingMoneyIdx){
         randMoneyIdx = generateRandom(1, numCases);
-    } // todo fix this
+    }
     PLAYER_CASES[caseIdx] = MONEY_CASES[randMoneyIdx];
     cout << "The value of case " << caseIdx << " is " << MONEY_CASES[randMoneyIdx] << endl;
     MONEY_CASES[randMoneyIdx] = -1;
@@ -212,7 +212,7 @@ void initArray(int arr[], int size){
 }
 
 int generateRandom(int lower, int upper){
-    srand(time(0));
+    // srand(time(0));
     int random = lower + rand() % (upper - lower + 1);
     return random;
 }
