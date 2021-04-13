@@ -20,6 +20,7 @@ int CASES_MONEY[MAX_CASES_SIZE]; // possible values inside a case, idx start at 
 int PLAYER_CASES[MAX_CASES_SIZE]; // index = case, value = money in case
 int ROUNDS[MAX_ROUNDS_SIZE]; // index = round #, val = how many cases to choose in that round
 int numCases = 0;
+int totalCasesSelected = 0;
 int numRounds = 0;
 int selectedCase = 0;
 int startingCase = 0;
@@ -38,9 +39,13 @@ bool isValidPlayerCase(int caseIdx);
 void printMoney();
 int printCases();
 void chooseCase(int caseIdx);
+void clearScreen();
+float getAvgRemainingMoney();
+float getOffer();
 
 // main
 int main() {
+    int deal = 0;
     cout << "Welcome to Deal or No Deal!" << endl;
     numCases = 16;
     // numCases = printChooseNumCases();
@@ -54,16 +59,24 @@ int main() {
     startingCase = printCases();
     chooseCase(startingCase);
 
-    while (currRound <= numRounds){
-        // system("CLS");
+    while (currRound <= numRounds && deal <= 0){
+        clearScreen();
         int casesSelected = 0;
         cout << "We are in Round " << currRound << endl;
         cout << "You must choose " << ROUNDS[currRound] << " cases in this round." << endl;
-        while(casesSelected <  ROUNDS[currRound]){
+        while(casesSelected <  ROUNDS[currRound] && deal <= 0){
             selectedCase = printCases();
             chooseCase(selectedCase);
             printMoney();
             casesSelected++;
+            totalCasesSelected++;
+        }
+        if (currRound < numRounds){
+            // do bank stuff
+            float offer = getOffer();
+            cout << "This is what the bank offers: " << offer << endl;
+            cout << "Deal (1) or No Deal (0)? ";
+            cin >> deal;
         }
         currRound++;
     }
@@ -72,6 +85,22 @@ int main() {
 }
 
 // function decs
+float getOffer(){
+    float a = getAvgRemainingMoney();
+    float b = (currRound * 1.0)/numRounds;
+    return a * b;
+}
+
+float getAvgRemainingMoney(){
+    float val = 0.0;
+    for (int i = 1; i <= numCases; ++i) {
+        if (CASES_MONEY[i] > 0){
+            val += CASES_MONEY[i];
+        }
+    }
+    return val/totalCasesSelected;
+}
+
 void chooseCase(int caseIdx) {
     int randIdx = generateRandom(1, numCases);
     while(CASES_MONEY[randIdx] < 0){
@@ -173,6 +202,10 @@ bool isValidPlayerCase(int caseIdx) {
 
 
 // gui functions
+void clearScreen(){
+    cout << string( 100, '\n' );
+}
+
 void printArray(int arr[], int size){
     for (int i = 0; i < size; ++i) {
         if (i % 5 == 0){
